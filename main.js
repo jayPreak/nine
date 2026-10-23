@@ -203,7 +203,7 @@ function initWorld() {
   const eHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softSprite("rgba(255,170,200,1)"), transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
   eHalo.scale.setScalar(9); eHalo.position.z = -1;
   endHeart.add(eHalo, eh);
-  endHeart.position.set(0, 2.7, -140);
+  endHeart.position.set(0, 3.9, -140);
   endHeart.scale.setScalar(1.6);
   scene.add(endHeart);
 

@@ -190,3 +190,8 @@ body.tone-dark .hud-nav a:hover { border-bottom-color: currentColor; }
 body.tone-dark .hud-progress { background: rgba(255,255,255,.25); }
 body.tone-dark .hud-caption { color: #fff; background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.3); }
 body.tone-dark .hc-text { color: #fff; }
+.scroll-cue { font-size: .85rem; color: var(--rose-900); }
+.hud-nav a { text-shadow: 0 1px 12px rgba(60, 10, 38, .35); }
+body.tone-dark .hud-nav a { text-shadow: 0 1px 14px rgba(40, 6, 26, .7); }
+.hud-progress { opacity: 0; transition: opacity .6s; }
+body.tone-dark .hud-progress { opacity: 1; }
