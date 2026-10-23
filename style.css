@@ -182,3 +182,9 @@ section { position: relative; padding: 0 var(--pad); }
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
   .reveal, .hero-nine, .hero-tag, .counter, .scroll-cue, .reveal-line > span { opacity: 1; transform: none; }
 }
+
+body.tone-dark .hud-mark { color: #fff; }
+body.tone-dark .hud-nav { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.35); }
+body.tone-dark .hud-nav a { color: #fff; }
+body.tone-dark .hud-nav a:hover { background: #fff; color: var(--rose-700); }
+body.tone-dark .hud-progress { background: rgba(255,255,255,.25); }

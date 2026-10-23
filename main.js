@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
+try { history.scrollRestoration = "manual"; } catch (e) {}
+window.scrollTo(0, 0);
 const C = window.NINE;
 const $ = (id) => document.getElementById(id);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -191,6 +193,15 @@ function initWorld() {
   heartGroup.add(halo, heart);
   scene.add(heartGroup);
 
+  const endHeart = new THREE.Group();
+  const eh = new THREE.Mesh(heartGeo, heartMat);
+  const eHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softSprite("rgba(255,170,200,1)"), transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+  eHalo.scale.setScalar(9); eHalo.position.z = -1;
+  endHeart.add(eHalo, eh);
+  endHeart.position.set(0, 2.7, -140);
+  endHeart.scale.setScalar(1.6);
+  scene.add(endHeart);
+
   /* ── floating mini hearts ── */
   const MINI = coarse ? 60 : 110;
   const miniGeo = buildHeartGeometry(0.28, 0.08);
@@ -238,8 +249,8 @@ function initWorld() {
           vec4 mv = modelViewMatrix * vec4(p, 1.);
           gl_Position = projectionMatrix * mv;
           float tw = .55 + .45 * sin(uTime*1.4 + aSeed*3.);
-          vA = tw * smoothstep(60., 6., -mv.z) * smoothstep(0.2, 1.5, -mv.z);
-          gl_PointSize = aSize * uPx * (90. / -mv.z);
+          vA = tw * smoothstep(60., 6., -mv.z) * smoothstep(2.5, 7., -mv.z);
+          gl_PointSize = min(aSize * uPx * (90. / -mv.z), 26. * uPx);
         }`,
       fragmentShader: `uniform vec3 uTint; varying float vA;
         void main(){ float d = length(gl_PointCoord - .5); float a = smoothstep(.5, 0., d); a *= a; gl_FragColor = vec4(uTint, a * vA * .9); }`,
@@ -284,7 +295,7 @@ function initWorld() {
           c = mix(c, vec3(1., .88, .93), (1. - smoothstep(0.2, 1., vUv.y)) * .0);
           float fogA = smoothstep(9., 44., vD);
           c = mix(c, uFog, fogA * .85);
-          float fade = (1. - smoothstep(32., 50., vD)) * smoothstep(.5, 2.4, vD) * uReveal;
+          float fade = (1. - smoothstep(16., 30., vD)) * smoothstep(.5, 2.4, vD) * uReveal;
           gl_FragColor = vec4(c, alpha * fade);
           #include <colorspace_fragment>
         }`,
@@ -300,7 +311,7 @@ function initWorld() {
     u.uMap.value = tex;
     const aspect = tex.image.width / tex.image.height;
     u.uAspect.value = aspect;
-    const h = g.type === "video" ? (aspect > 1 ? 2.5 : 3.6) : 3.5;
+    const h = g.type === "video" ? (aspect > 1 ? 3 : 4.4) : 4.3;
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h, 24, 24), mat);
     mesh.userData = { i: g.i, g, u, h, w: h * aspect, tex, posterTex: tex, video: null, videoTex: null, targetHover: 0, phase: Math.random() * 6 };
     if (g.type === "video") {
@@ -314,7 +325,7 @@ function initWorld() {
     photoMeshes[g.i] = mesh;
   });
 
-  world = { scene, camera, curve, sky, skyU, heart, heartGroup, halo, minis, miniState, dummy, dust, dustU, rose, loadingTextures, key };
+  world = { endHeart, eh, scene, camera, curve, sky, skyU, heart, heartGroup, halo, minis, miniState, dummy, dust, dustU, rose, loadingTextures, key };
   return world;
 }
 
@@ -567,6 +578,12 @@ function frame() {
     hh.visible = s > 0.002;
     world.halo.material.opacity = 0.8 * (1 - smooth(tSmooth, 0.04, 0.12));
   }
+
+  /* finale heart */
+  const eb = 1 + Math.pow(Math.max(0, Math.sin(time * 2.2)), 8) * 0.06;
+  world.endHeart.scale.setScalar(1.6 * eb);
+  world.eh.rotation.y = time * 0.35;
+  document.body.classList.toggle("tone-dark", tSmooth > 0.9);
 
   /* mini hearts */
   world.miniState.forEach((st, i) => {
