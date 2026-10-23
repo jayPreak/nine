@@ -74,6 +74,7 @@ try {
 }
 
 const photoMeshes = [];
+const backdrops = [];
 const photoData = C.gallery.map((g, i) => ({ ...g, i }));
 let world = null;
 
@@ -109,11 +110,11 @@ function softSprite(inner = "rgba(255,255,255,1)", outer = "rgba(255,255,255,0)"
 
 /* Palette that the sky/fog moves through as you scroll */
 const stops = [
-  { t: 0.0, top: "#ff9ec9", bot: "#ffd3e5", glow: "#ffd9e8" },
-  { t: 0.3, top: "#ff86b8", bot: "#ffc4db", glow: "#fff0e0" },
-  { t: 0.62, top: "#f77fae", bot: "#ffc8da", glow: "#ffe2c6" },
-  { t: 0.86, top: "#c23c7b", bot: "#ff9cb2", glow: "#ffd2a8" },
-  { t: 1.0, top: "#6e1a4d", bot: "#e8709c", glow: "#ffb48a" },
+  { t: 0.0, top: "#d8447f", bot: "#ffc9de", glow: "#ffe3ee" },
+  { t: 0.3, top: "#b92f6c", bot: "#ffb1cf", glow: "#ffe0d0" },
+  { t: 0.62, top: "#8f1d55", bot: "#f58cb4", glow: "#ffcfb5" },
+  { t: 0.86, top: "#4a0f33", bot: "#d94f86", glow: "#ffb48a" },
+  { t: 1.0, top: "#2a0a1e", bot: "#b83a74", glow: "#ff9a86" },
 ].map((s) => ({ t: s.t, top: new THREE.Color(s.top), bot: new THREE.Color(s.bot), glow: new THREE.Color(s.glow) }));
 const tmpA = new THREE.Color();
 function palette(t, out) {
@@ -129,16 +130,20 @@ function palette(t, out) {
 
 function initWorld() {
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xffe0ec, 10, 48);
+  scene.fog = new THREE.Fog(0xffe0ec, 6, 44);
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 400);
 
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, coarse ? 1.75 : 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.95;
+  renderer.toneMappingExposure = 1.0;
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const envScene = new THREE.Scene();
+  envScene.background = new THREE.Color(0x3a0f28);
+  const panel = (c, i, x, y, z, w, h) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(i), side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); envScene.add(m); };
+  panel(0xffffff, 6, 6, 8, 6, 10, 6); panel(0xff7ab0, 4, -8, 2, 4, 8, 10); panel(0xffd0e2, 3, 0, -6, -8, 14, 5); panel(0xff3d8b, 3, 8, -2, -6, 6, 10); panel(0xffffff, 3, -4, 6, -9, 12, 3);
+  scene.environment = pmrem.fromScene(envScene, 0.03).texture;
 
   scene.add(new THREE.HemisphereLight(0xffd6e6, 0xff7fb0, 0.8));
   const key = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -167,7 +172,7 @@ function initWorld() {
         float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
         void main(){
           vec3 d = normalize(vP);
-          float y = smoothstep(-0.55, 0.55, d.y);
+          float y = smoothstep(-0.35, 0.65, d.y);
           vec3 c = mix(uBot, uTop, y);
           float g = pow(max(dot(d, normalize(vec3(0.15, 0.08, -1.))), 0.), 5.);
           c += uGlow * g * 0.2;
@@ -182,8 +187,8 @@ function initWorld() {
   /* ── hero heart ── */
   const heartGeo = buildHeartGeometry();
   const heartMat = new THREE.MeshPhysicalMaterial({
-    color: 0xe8286f, roughness: 0.14, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.06,
-    iridescence: 0.7, iridescenceIOR: 1.5, sheen: 1, sheenColor: new THREE.Color(0xffc2dc), envMapIntensity: 0.9,
+    color: 0xd81b60, roughness: 0.22, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.04,
+    iridescence: 0.7, iridescenceIOR: 1.5, sheen: 1, sheenColor: new THREE.Color(0xffc2dc), envMapIntensity: 1.5,
   });
   const heart = new THREE.Mesh(heartGeo, heartMat);
   const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: softSprite("rgba(255,120,175,1)"), transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
@@ -213,7 +218,7 @@ function initWorld() {
   const col = new THREE.Color();
   const miniCols = ["#ff7bb0", "#ffffff", "#ff4f9a", "#ffb3d1", "#ffa07a"];
   for (let i = 0; i < MINI; i++) {
-    const u = Math.random();
+    const u = 0.1 + Math.random() * 0.9;
     const p = curve.getPointAt(u);
     const a = Math.random() * Math.PI * 2, r = 3.2 + Math.random() * 9;
     const st = { base: new THREE.Vector3(p.x + Math.cos(a) * r, p.y + (Math.random() - 0.5) * 8, p.z + Math.sin(a) * r * 0.6), s: 0.5 + Math.random() * 1.3, sp: 0.2 + Math.random() * 0.6, ph: Math.random() * 9, rot: new THREE.Euler(Math.random() * 6, Math.random() * 6, Math.random() * 6) };
@@ -262,7 +267,7 @@ function initWorld() {
   /* ── photo / video planes ── */
   const loader = new THREE.TextureLoader();
   const photoU = () => ({
-    uMap: { value: null }, uAspect: { value: 0.75 }, uVel: { value: 0 }, uHover: { value: 0 }, uFog: { value: new THREE.Color() }, uReveal: { value: 0 }, uTime: { value: 0 },
+    uMap: { value: null }, uAspect: { value: 0.75 }, uVel: { value: 0 }, uHover: { value: 0 }, uFog: { value: new THREE.Color() }, uReveal: { value: 0 }, uTime: { value: 0 }, uHaze: { value: 0 },
   });
   const photoMat = (u) =>
     new THREE.ShaderMaterial({
@@ -276,7 +281,7 @@ function initWorld() {
           vD = -mv.z;
           gl_Position = projectionMatrix * mv;
         }`,
-      fragmentShader: `uniform sampler2D uMap; uniform float uAspect, uHover, uReveal; uniform vec3 uFog; varying vec2 vUv; varying float vD;
+      fragmentShader: `uniform sampler2D uMap; uniform float uAspect, uHover, uReveal, uHaze; uniform vec3 uFog; varying vec2 vUv; varying float vD;
         float rbox(vec2 p, vec2 b, float r){ vec2 q = abs(p) - b + r; return length(max(q, 0.)) + min(max(q.x, q.y), 0.) - r; }
         void main(){
           vec2 p = (vUv - .5) * vec2(uAspect, 1.);
@@ -293,9 +298,9 @@ function initWorld() {
           vec3 c = inside ? img : frame;
           c *= 1. + uHover * .07;
           c = mix(c, vec3(1., .88, .93), (1. - smoothstep(0.2, 1., vUv.y)) * .0);
-          float fogA = smoothstep(9., 44., vD);
+          float fogA = clamp(smoothstep(9., 44., vD) + uHaze, 0., 1.);
           c = mix(c, uFog, fogA * .85);
-          float fade = (1. - smoothstep(16., 30., vD)) * smoothstep(.5, 2.4, vD) * uReveal;
+          float fade = (1. - smoothstep(16., 30., vD)) * smoothstep(1.5, 5.5, vD) * uReveal;
           gl_FragColor = vec4(c, alpha * fade);
           #include <colorspace_fragment>
         }`,
@@ -311,7 +316,7 @@ function initWorld() {
     u.uMap.value = tex;
     const aspect = tex.image.width / tex.image.height;
     u.uAspect.value = aspect;
-    const h = g.type === "video" ? (aspect > 1 ? 3 : 4.4) : 4.3;
+    const h = g.type === "video" ? (aspect > 1 ? 3.6 : 5) : 5;
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h, 24, 24), mat);
     mesh.userData = { i: g.i, g, u, h, w: h * aspect, tex, posterTex: tex, video: null, videoTex: null, targetHover: 0, phase: Math.random() * 6 };
     if (g.type === "video") {
@@ -323,6 +328,12 @@ function initWorld() {
     }
     scene.add(mesh);
     photoMeshes[g.i] = mesh;
+    const bu = photoU();
+    bu.uMap.value = tex; bu.uAspect.value = aspect; bu.uHaze.value = 0.55;
+    const bd = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h, 8, 8), photoMat(bu));
+    bd.userData = { u: bu, phase: Math.random() * 6 };
+    scene.add(bd);
+    backdrops[g.i] = bd;
   });
 
   world = { endHeart, eh, scene, camera, curve, sky, skyU, heart, heartGroup, halo, minis, miniState, dummy, dust, dustU, rose, loadingTextures, key };
@@ -344,7 +355,7 @@ function layout() {
   camera.updateProjectionMatrix();
 
   const gal = $("gallery");
-  gal.style.minHeight = `${(C.gallery.length * 0.85 + 1.2) * 100}svh`;
+  gal.style.minHeight = `${(C.gallery.length * 0.7 + 1.1) * 100}svh`;
   maxScroll = Math.max(1, document.documentElement.scrollHeight - h);
   g0 = clamp((gal.offsetTop + h * 0.45) / maxScroll, 0.05, 0.9);
   g1 = clamp((gal.offsetTop + gal.offsetHeight - h * 0.2) / maxScroll, g0 + 0.05, 0.98);
@@ -361,7 +372,7 @@ function layout() {
     right.crossVectors(tangent, up).normalize();
     const side = idx % 2 === 0 ? -1 : 1;
     const scale = portrait ? 0.78 : 1;
-    const lateral = portrait ? side * (0.3 + (idx % 3) * 0.12) : side * (pw * 0.5 * scale + 1.15 + (idx % 3) * 0.25);
+    const lateral = portrait ? side * (0.3 + (idx % 3) * 0.12) : side * (pw * 0.5 * scale + 1.9 + (idx % 3) * 0.25);
     mesh.scale.setScalar(scale);
     mesh.position.copy(p).addScaledVector(right, lateral);
     mesh.position.y += (((idx * 7) % 5) - 2) * 0.22 + (portrait ? 0.15 : 0);
@@ -370,6 +381,18 @@ function layout() {
     mesh.rotateY(-side * (portrait ? 0.18 : 0.34));
     mesh.rotateZ(side * 0.04);
     mesh.userData.baseY = mesh.position.y;
+
+    const bd = backdrops[idx];
+    if (bd) {
+      const bu2 = clamp(u + (idx % 2 ? 0.012 : -0.012), 0, 1);
+      const bp = curve.getPointAt(bu2);
+      bd.scale.setScalar((portrait ? 1.4 : 1.9));
+      bd.position.copy(bp).addScaledVector(right, -side * (portrait ? 3.4 : 7 + (idx % 3) * 1.2));
+      bd.position.y += ((idx * 5) % 4 - 1.5) * 1.1;
+      bd.lookAt(bd.position.clone().sub(tangent));
+      bd.rotateY(side * 0.5);
+      bd.userData.baseY = bd.position.y;
+    }
   });
 
   /* hero heart placement depends on viewport */
@@ -582,8 +605,9 @@ function frame() {
   /* finale heart */
   const eb = 1 + Math.pow(Math.max(0, Math.sin(time * 2.2)), 8) * 0.06;
   world.endHeart.scale.setScalar(1.6 * eb);
-  world.eh.rotation.y = time * 0.35;
-  document.body.classList.toggle("tone-dark", tSmooth > 0.9);
+  world.eh.rotation.y = Math.sin(time * 0.6) * 0.5;
+  document.body.classList.toggle("tone-dark", tSmooth > 0.55);
+  world.endHeart.visible = tSmooth > 0.8;
 
   /* mini hearts */
   world.miniState.forEach((st, i) => {
@@ -615,6 +639,8 @@ function frame() {
     U.uReveal.value = lerp(U.uReveal.value, 1, 0.04);
     m.position.y = ud.baseY + Math.sin(time * 0.6 + ud.phase) * 0.12;
     if (du < nd) { nd = du; nearest = ud.i; }
+    const bd = backdrops[ud.i];
+    if (bd) { const B = bd.userData.u; B.uTime.value = time; B.uVel.value = U.uVel.value; B.uFog.value.copy(scene.fog.color); B.uReveal.value = U.uReveal.value * 0.6; bd.position.y = bd.userData.baseY + Math.sin(time * 0.4 + bd.userData.phase) * 0.2; }
     if (ud.video) {
       const near = du < 0.04;
       if (near && ud.video.paused) {
