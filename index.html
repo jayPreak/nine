@@ -4,96 +4,141 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nine Months</title>
-<meta name="description" content="Nine months, one letter, a lot of love.">
-<meta name="theme-color" content="#fdf2f8">
-<meta property="og:title" content="Nine Months 💗">
+<meta name="description" content="Nine months, one letter, a whole world of us.">
+<meta name="theme-color" content="#ffd1e3">
+<meta property="og:title" content="Nine Months">
 <meta property="og:image" content="media/photo-03.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💗%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
 </head>
-<body>
-<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
-<canvas id="petals" aria-hidden="true"></canvas>
+<body class="is-loading">
 
-<header class="hero" id="top">
-  <p class="eyebrow reveal">a little something for</p>
-  <h1 class="reveal"><span class="script" id="herName">you</span></h1>
-  <div class="nine reveal" aria-label="Nine months">
-    <span class="nine-num">9</span>
-    <span class="nine-label script">months</span>
+<div class="fallback-bg" aria-hidden="true"></div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<!-- Loader -->
+<div class="loader" id="loader" role="status" aria-live="polite">
+  <div class="loader-inner">
+    <p class="loader-eyebrow">something for you</p>
+    <div class="loader-count"><span id="loadNum">0</span></div>
+    <div class="loader-bar"><i id="loadBar"></i></div>
   </div>
-  <p class="tagline reveal" id="tagline"></p>
-  <div class="counter reveal" id="counter" aria-live="off">
-    <div><b id="cDays">0</b><span>days</span></div>
-    <div><b id="cHours">0</b><span>hours</span></div>
-    <div><b id="cMin">0</b><span>minutes</span></div>
-    <div><b id="cSec">0</b><span>seconds</span></div>
-  </div>
-  <a class="scroll-hint" href="#letter" aria-label="Scroll to the letter">
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-  </a>
+</div>
+
+<!-- HUD -->
+<header class="hud" id="hud">
+  <a class="hud-mark script" href="#top" data-hover aria-label="Back to top">nine</a>
+  <nav class="hud-nav" aria-label="Sections">
+    <a href="#letter" data-hover>letter</a>
+    <a href="#gallery" data-hover>us</a>
+    <a href="#finale" data-hover>forever</a>
+  </nav>
 </header>
+<div class="hud-caption" id="hudCap" aria-live="polite">
+  <span class="hc-num" id="hcNum">01</span><span class="hc-sep"></span><span class="hc-text script" id="hcText"></span>
+</div>
+<div class="hud-progress" aria-hidden="true"><i id="progBar"></i></div>
 
-<section class="letter-sec" id="letter">
-  <h2 class="sec-title script reveal">A letter, just for you</h2>
-  <div class="envelope-wrap reveal">
-    <button class="envelope" id="envelope" aria-expanded="false" aria-controls="paper">
-      <span class="env-back"></span>
-      <span class="paper-peek" aria-hidden="true"></span>
-      <span class="env-front"></span>
-      <span class="env-flap"></span>
-      <span class="seal" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.4 1.1 4.3 2.5.3.4.9.4 1.2 0 .9-1.4 2.3-2.5 4.3-2.5 3.2 0 5 3.1 3.7 6.3C19.5 16.4 12 21 12 21z"/></svg>
-      </span>
-      <span class="env-hint" id="envHint">tap to open</span>
-    </button>
-  </div>
-
-  <article class="paper" id="paper" hidden>
-    <div class="paper-inner">
-      <p class="greeting script" id="greeting"></p>
-      <div id="letterBody"></div>
-      <p class="signoff" id="signoff"></p>
-      <p class="signature script" id="signature"></p>
+<main>
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow reveal-line"><span>a little world for</span></p>
+      <h1 class="hero-name script reveal-line"><span id="herName">you</span></h1>
+      <div class="hero-nine">
+        <span class="nine-num" aria-hidden="true">9</span>
+        <span class="nine-word"><em class="script">months</em><b class="sr-only">Nine months</b></span>
+      </div>
+      <p class="hero-tag" id="tagline"></p>
+      <div class="counter" id="counter" aria-label="Time together">
+        <div><b id="cDays">0</b><span>days</span></div>
+        <div><b id="cHours">0</b><span>hrs</span></div>
+        <div><b id="cMin">0</b><span>min</span></div>
+        <div><b id="cSec">0</b><span>sec</span></div>
+      </div>
     </div>
-  </article>
-</section>
+    <a class="scroll-cue" href="#letter" data-hover aria-label="Scroll down">
+      <span>scroll</span><i></i>
+    </a>
+  </section>
 
-<section class="gallery-sec" id="gallery">
-  <h2 class="sec-title script reveal">Our little museum</h2>
-  <p class="sec-sub reveal">tap anything to see it bigger</p>
-  <div class="gallery" id="galleryGrid"></div>
-</section>
+  <!-- LETTER -->
+  <section class="letter-sec" id="letter">
+    <p class="kicker reveal">chapter one</p>
+    <h2 class="sec-title script reveal">A letter, just for you</h2>
 
-<footer class="closing">
-  <div class="big-heart" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.4 1.1 4.3 2.5.3.4.9.4 1.2 0 .9-1.4 2.3-2.5 4.3-2.5 3.2 0 5 3.1 3.7 6.3C19.5 16.4 12 21 12 21z"/></svg>
-  </div>
-  <p class="script closing-line" id="closing"></p>
-  <button class="confetti-btn" id="confettiBtn">
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.4 1.1 4.3 2.5.3.4.9.4 1.2 0 .9-1.4 2.3-2.5 4.3-2.5 3.2 0 5 3.1 3.7 6.3C19.5 16.4 12 21 12 21z"/></svg>
-    shower me with love
-  </button>
-  <p class="made">made with love by <span id="yourName"></span></p>
-</footer>
+    <div class="envelope-wrap reveal">
+      <button class="envelope" id="envelope" aria-expanded="false" aria-controls="paper" data-hover>
+        <span class="env-back"></span>
+        <span class="paper-peek" aria-hidden="true"></span>
+        <span class="env-front"></span>
+        <span class="env-flap"></span>
+        <span class="seal" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.4 1.1 4.3 2.5.3.4.9.4 1.2 0 .9-1.4 2.3-2.5 4.3-2.5 3.2 0 5 3.1 3.7 6.3C19.5 16.4 12 21 12 21z"/></svg>
+        </span>
+        <span class="env-hint" id="envHint">tap to open</span>
+      </button>
+    </div>
+
+    <article class="paper" id="paper" hidden>
+      <div class="paper-inner">
+        <p class="greeting script" id="greeting"></p>
+        <div id="letterBody"></div>
+        <p class="signoff" id="signoff"></p>
+        <p class="signature script" id="signature"></p>
+      </div>
+    </article>
+  </section>
+
+  <!-- GALLERY (the 3D world flies past; this section only provides scroll length) -->
+  <section class="gallery-sec" id="gallery" aria-label="Photo and video gallery">
+    <div class="gallery-intro">
+      <p class="kicker">chapter two</p>
+      <h2 class="sec-title script">Our little museum</h2>
+      <p class="sec-sub">keep scrolling, tap anything to see it bigger</p>
+    </div>
+    <ul class="sr-only" id="galleryList"></ul>
+  </section>
+
+  <!-- FINALE -->
+  <section class="finale" id="finale">
+    <p class="kicker">chapter three</p>
+    <p class="finale-line script" id="closing"></p>
+    <button class="love-btn" id="confettiBtn" data-hover>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.4 1.1 4.3 2.5.3.4.9.4 1.2 0 .9-1.4 2.3-2.5 4.3-2.5 3.2 0 5 3.1 3.7 6.3C19.5 16.4 12 21 12 21z"/></svg>
+      shower me with love
+    </button>
+    <p class="made">made with love by <span id="yourName"></span></p>
+  </section>
+</main>
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Media viewer" hidden>
-  <button class="lb-close" id="lbClose" aria-label="Close">
+  <button class="lb-close" id="lbClose" aria-label="Close" data-hover>
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
   </button>
-  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous" data-hover>
     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
   </button>
-  <button class="lb-nav lb-next" id="lbNext" aria-label="Next">
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next" data-hover>
     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
   </button>
   <figure class="lb-stage" id="lbStage"></figure>
 </div>
 
 <script src="content.js"></script>
-<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>
