@@ -15,25 +15,10 @@ window.NINE = {
   // Each string is one paragraph. Add / remove as many as you like.
   letterGreeting: "My dearest Ishu,",
   letter: [
-    "Write your first paragraph here. This is a placeholder — replace it with your own words.",
-    "Each line in this list becomes its own paragraph on the pink paper, fading in one by one as she reads.",
-    "Tell her what these nine months have meant, the moments you keep replaying, and what you're looking forward to.",
+    "Hiii my babieeee, I miss youuuu soo muchhh I love youuuuu. Youre the best at everything I love being with you it is the best feeling ever, I wish I could engrain this into your brain and heart as well, I love you and i really do. I dont want you feeling down or bad ever. I felt so bad I could do nothing to help you and we had been fighting and arguing so much recently I really am sorry. I am sorry I even left any sliver of doubt but I will always love you no matter what MWAAAH jaise aap kuma ko batate ho dil ki baatein mujhe bhi bataya karo :( I was so sad hearing you cry pls i beg you I will do anything to make you happy 🥺 SO HERES TO 9 MORE DECADES YESSS I am 9 months pregnant with your child :3 happy annieversary baby (rest is ai generated i will admit except this letter)",
   ],
   letterSignoff: "Forever yours,",
   letterSignature: "Jayesh",
-
-  // ── TIMELINE (one entry per month, 9 total) ─────────────────
-  months: [
-    { title: "Month 1", text: "Where it all began." },
-    { title: "Month 2", text: "Your note for this month." },
-    { title: "Month 3", text: "Your note for this month." },
-    { title: "Month 4", text: "Your note for this month." },
-    { title: "Month 5", text: "Your note for this month." },
-    { title: "Month 6", text: "Halfway to forever." },
-    { title: "Month 7", text: "Your note for this month." },
-    { title: "Month 8", text: "Your note for this month." },
-    { title: "Month 9", text: "Nine months, and counting." },
-  ],
 
   // ── GALLERY ─────────────────────────────────────────────────
   // Files live in /media. Swap, reorder, or add your own.

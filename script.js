@@ -35,16 +35,6 @@
   tick();
   setInterval(tick, 1000);
 
-  /* ── Timeline ── */
-  const tl = $("timeline");
-  C.months.forEach((m) => {
-    const li = document.createElement("li");
-    li.innerHTML = '<div class="tl-card"><h3></h3><p></p></div>';
-    li.querySelector("h3").textContent = m.title;
-    li.querySelector("p").textContent = m.text;
-    tl.appendChild(li);
-  });
-
   /* ── Gallery ── */
   const grid = $("galleryGrid");
   C.gallery.forEach((g, i) => {
@@ -127,7 +117,7 @@
     }),
     { threshold: 0.15, rootMargin: "0px 0px -6% 0px" }
   );
-  document.querySelectorAll(".reveal, .timeline li, .tile").forEach((el, i) => {
+  document.querySelectorAll(".reveal, .tile").forEach((el, i) => {
     if (el.classList.contains("tile")) el.style.transitionDelay = (i % 4) * 90 + "ms";
     io.observe(el);
   });
