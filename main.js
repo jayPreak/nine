@@ -187,7 +187,7 @@ function initWorld() {
   /* ── hero heart ── */
   const heartGeo = buildHeartGeometry();
   const heartMat = new THREE.MeshPhysicalMaterial({
-    color: 0xd81b60, roughness: 0.22, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.04,
+    color: 0xff3d85, roughness: 0.12, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.03, transmission: 0.55, thickness: 1.4, ior: 1.45, attenuationColor: new THREE.Color(0xff1f6e), attenuationDistance: 1.6, specularIntensity: 1,
     iridescence: 0.7, iridescenceIOR: 1.5, sheen: 1, sheenColor: new THREE.Color(0xffc2dc), envMapIntensity: 1.5,
   });
   const heart = new THREE.Mesh(heartGeo, heartMat);
@@ -220,7 +220,7 @@ function initWorld() {
   for (let i = 0; i < MINI; i++) {
     const u = 0.1 + Math.random() * 0.9;
     const p = curve.getPointAt(u);
-    const a = Math.random() * Math.PI * 2, r = 3.2 + Math.random() * 9;
+    const a = Math.random() * Math.PI * 2, r = 7 + Math.random() * 9;
     const st = { base: new THREE.Vector3(p.x + Math.cos(a) * r, p.y + (Math.random() - 0.5) * 8, p.z + Math.sin(a) * r * 0.6), s: 0.5 + Math.random() * 1.3, sp: 0.2 + Math.random() * 0.6, ph: Math.random() * 9, rot: new THREE.Euler(Math.random() * 6, Math.random() * 6, Math.random() * 6) };
     miniState.push(st);
     minis.setColorAt(i, col.set(miniCols[(Math.random() * miniCols.length) | 0]));
@@ -316,7 +316,7 @@ function initWorld() {
     u.uMap.value = tex;
     const aspect = tex.image.width / tex.image.height;
     u.uAspect.value = aspect;
-    const h = g.type === "video" ? (aspect > 1 ? 3.6 : 5) : 5;
+    const h = g.type === "video" ? (aspect > 1 ? 4.6 : 6) : 6;
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h, 24, 24), mat);
     mesh.userData = { i: g.i, g, u, h, w: h * aspect, tex, posterTex: tex, video: null, videoTex: null, targetHover: 0, phase: Math.random() * 6 };
     if (g.type === "video") {
@@ -328,12 +328,7 @@ function initWorld() {
     }
     scene.add(mesh);
     photoMeshes[g.i] = mesh;
-    const bu = photoU();
-    bu.uMap.value = tex; bu.uAspect.value = aspect; bu.uHaze.value = 0.55;
-    const bd = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h, 8, 8), photoMat(bu));
-    bd.userData = { u: bu, phase: Math.random() * 6 };
-    scene.add(bd);
-    backdrops[g.i] = bd;
+
   });
 
   world = { endHeart, eh, scene, camera, curve, sky, skyU, heart, heartGroup, halo, minis, miniState, dummy, dust, dustU, rose, loadingTextures, key };
