@@ -606,7 +606,7 @@ function frame() {
   const eb = 1 + Math.pow(Math.max(0, Math.sin(time * 2.2)), 8) * 0.06;
   world.endHeart.scale.setScalar(1.6 * eb);
   world.eh.rotation.y = Math.sin(time * 0.6) * 0.5;
-  document.body.classList.toggle("tone-dark", tSmooth > 0.55);
+  document.body.classList.toggle("tone-dark", tSmooth > 0.2);
   world.endHeart.visible = tSmooth > 0.8;
 
   /* mini hearts */
